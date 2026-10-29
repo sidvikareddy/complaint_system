@@ -3,7 +3,7 @@ const fs = require('fs');
 const Complaint = require('../models/Complaint');
 const User = require('../models/User');
 const Notification = require('../models/Notification');
-const { STATUSES, CATEGORIES, DEPARTMENTS } = require('../models/Complaint');
+const { STATUSES, CATEGORIES, DEPARTMENTS, DISPLAY_STAFF } = require('../models/Complaint');
 const { protect, adminOnly, studentOnly } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
@@ -12,7 +12,7 @@ const router = express.Router();
 router.use(protect);
 
 // Meta (categories & statuses) for dropdowns
-router.get('/meta', (req, res) => res.json({ statuses: STATUSES, categories: CATEGORIES, departments: DEPARTMENTS }));
+router.get('/meta', (req, res) => res.json({ statuses: STATUSES, categories: CATEGORIES, departments: DEPARTMENTS, displayStaff: DISPLAY_STAFF }));
 
 router.get('/duplicates', studentOnly, async (req, res, next) => {
   try {

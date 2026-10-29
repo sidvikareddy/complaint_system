@@ -1,74 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Smart Campus Complaints - Login</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Smart Campus Complaint Management System">
+  <title>Smart Campus Portal | Complaint Management</title>
+  <style>
+    :root {
+      --bg: #0b0f19; --panel: rgba(17, 24, 39, .66); --panel-strong: rgba(21, 30, 48, .92);
+      --line: rgba(255,255,255,.09); --text: #f8fafc; --muted: #9aa8bd;
+      --blue: #3b82f6; --cyan: #06b6d4; --indigo: #6366f1; --green: #22c55e; --amber: #f59e0b;
+      --shadow: 0 24px 80px rgba(0,0,0,.35);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; color: var(--text); background: var(--bg); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.6; }
+    body::before, body::after { content: ""; position: fixed; z-index: -1; width: 35rem; height: 35rem; border-radius: 50%; filter: blur(80px); opacity: .14; pointer-events: none; }
+    body::before { background: var(--blue); top: -18rem; left: -12rem; } body::after { background: var(--indigo); right: -15rem; top: 35%; }
+    a { color: inherit; text-decoration: none; } button { font: inherit; cursor: pointer; }
+    .container { width: min(1120px, calc(100% - 40px)); margin: auto; }
+    .glass { background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+    .nav { position: sticky; top: 0; z-index: 20; border-bottom: 1px solid rgba(255,255,255,.06); background: rgba(11,15,25,.75); backdrop-filter: blur(18px); }
+    .nav-inner { height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 800; letter-spacing: -.03em; }
+    .brand-badge { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 12px; background: linear-gradient(135deg, var(--cyan), var(--indigo)); box-shadow: 0 0 26px rgba(59,130,246,.55); }
+    .brand-badge span { font-size: 17px; color: white; }
+    .nav-links { display: flex; gap: 30px; color: var(--muted); font-size: 14px; } .nav-links a:hover { color: var(--text); }
+    .nav-actions { display: flex; gap: 9px; }
+    .btn { border: 1px solid transparent; border-radius: 999px; padding: 11px 18px; color: var(--text); font-weight: 700; transition: .25s ease; }
+    .btn:hover { transform: translateY(-2px); } .btn-primary { background: linear-gradient(100deg, var(--blue), var(--indigo)); box-shadow: 0 10px 28px rgba(59,130,246,.3); }
+    .btn-ghost { background: rgba(255,255,255,.04); border-color: var(--line); } .btn-ghost:hover { border-color: rgba(6,182,212,.6); }
+    .hero { display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: 72px; min-height: 620px; padding: 78px 0 68px; }
+    .eyebrow { display: inline-flex; gap: 8px; align-items: center; color: #7dd3fc; font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    .eyebrow i { width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 14px var(--cyan); }
+    h1 { max-width: 700px; margin: 18px 0; font-size: clamp(42px, 6vw, 72px); letter-spacing: -.065em; line-height: 1.04; }
+    .gradient { background: linear-gradient(110deg, #fff 25%, #7dd3fc 72%, #818cf8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hero-copy > p { max-width: 610px; margin: 0; color: var(--muted); font-size: 18px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+    .preview { position: relative; padding: 22px; border-radius: 24px; transform: rotate(1deg); }
+    .preview::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; background: linear-gradient(135deg, rgba(6,182,212,.8), transparent 40%, rgba(99,102,241,.7)); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+    .preview-top, .preview-row { display: flex; align-items: center; justify-content: space-between; }
+    .preview-top { padding-bottom: 19px; border-bottom: 1px solid var(--line); } .preview-top strong { font-size: 17px; } .live { color: #67e8f9; font-size: 12px; }
+    .preview-list { display: grid; gap: 12px; margin-top: 18px; } .preview-row { padding: 15px; border-radius: 15px; background: rgba(255,255,255,.045); }
+    .ticket { display: flex; align-items: center; gap: 11px; } .ticket-icon { display: grid; place-items: center; width: 35px; height: 35px; border-radius: 10px; background: rgba(59,130,246,.18); color: #7dd3fc; }
+    .ticket small { display: block; color: var(--muted); font-size: 11px; } .status { padding: 5px 9px; border-radius: 99px; font-size: 11px; font-weight: 800; } .pending { color: #fbbf24; background: rgba(245,158,11,.13); } .progress { color: #67e8f9; background: rgba(6,182,212,.13); } .resolved { color: #86efac; background: rgba(34,197,94,.13); }
+    .section { padding: 72px 0; } .section-heading { max-width: 650px; margin-bottom: 30px; } .section-heading h2 { margin: 8px 0; font-size: clamp(30px, 4vw, 44px); letter-spacing: -.05em; } .section-heading p { color: var(--muted); margin: 0; }
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; } .metric { padding: 22px; border-radius: 18px; position: relative; overflow: hidden; } .metric::after { content: ""; position: absolute; right: -25px; bottom: -34px; width: 100px; height: 100px; border-radius: 50%; background: var(--metric); opacity: .12; filter: blur(10px); }
+    .metric .label { color: var(--muted); font-size: 13px; } .metric strong { display: block; margin-top: 7px; color: var(--metric); font-size: 30px; letter-spacing: -.04em; }
+    .feature-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; } .feature { min-height: 205px; padding: 23px; border-radius: 18px; transition: .25s ease; } .feature:hover { transform: translateY(-5px); border-color: rgba(59,130,246,.45); background: rgba(22,33,54,.78); }
+    .feature-icon { display: grid; place-items: center; width: 43px; height: 43px; margin-bottom: 22px; border-radius: 13px; color: #93c5fd; background: rgba(59,130,246,.15); font-size: 20px; } .feature h3 { margin: 0 0 8px; font-size: 17px; } .feature p { margin: 0; color: var(--muted); font-size: 13px; }
+    .workflow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: steps; } .step { position: relative; padding: 28px; border-radius: 20px; } .step::before { counter-increment: steps; content: "0" counter(steps); color: #7dd3fc; font-size: 13px; font-weight: 800; } .step h3 { margin: 20px 0 7px; } .step p { color: var(--muted); margin: 0; font-size: 14px; }
+    footer { border-top: 1px solid var(--line); padding: 32px 0; color: var(--muted); font-size: 13px; } .footer-row { display: flex; justify-content: space-between; gap: 24px; align-items: center; } .badges, .footer-links { display: flex; flex-wrap: wrap; gap: 8px; } .tech { border: 1px solid var(--line); background: rgba(255,255,255,.04); border-radius: 99px; padding: 5px 10px; }
+    .modal { display: none; position: fixed; inset: 0; z-index: 50; place-items: center; padding: 18px; background: rgba(2,6,23,.78); backdrop-filter: blur(8px); } .modal.open { display: grid; } .auth-card { width: min(470px, 100%); max-height: 92vh; overflow: auto; border-radius: 22px; padding: 26px; position: relative; } .close { position: absolute; top: 15px; right: 17px; border: 0; background: none; color: var(--muted); font-size: 24px; }
+    .auth-card h2 { margin: 0 0 5px; } .auth-card > p { margin: 0 0 20px; color: var(--muted); font-size: 14px; } .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; padding: 5px; border-radius: 12px; background: rgba(255,255,255,.05); margin-bottom: 20px; } .tab { border: 0; border-radius: 9px; padding: 9px; color: var(--muted); background: transparent; font-weight: 700; } .tab.active { color: white; background: rgba(59,130,246,.23); }
+    form { display: grid; gap: 11px; } label { color: #cbd5e1; font-size: 12px; font-weight: 700; } input { width: 100%; padding: 12px 13px; border: 1px solid var(--line); border-radius: 10px; outline: 0; color: white; background: rgba(2,6,23,.46); } input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,130,246,.14); } .password-field { position: relative; } .password-toggle { position: absolute; right: 8px; top: 6px; border: 0; background: transparent; color: var(--muted); padding: 5px; } .login-options { display: flex; justify-content: space-between; align-items: center; margin: 4px 0 5px; color: var(--muted); font-size: 12px; } .checkbox-label { display: flex; gap: 6px; align-items: center; font-weight: 400; } .checkbox-label input { width: auto; } .login-options a, .text-button { color: #7dd3fc; } .text-button { border: 0; background: none; padding: 0; } .alert { display: none; margin-top: 13px; border-radius: 9px; padding: 10px; color: #fecaca; background: rgba(239,68,68,.13); font-size: 13px; } .alert.show { display: block; } .auth-switch { color: var(--muted); text-align: center; font-size: 13px; } .auth-switch button { font-weight: 700; }
+    @media (max-width: 850px) { .nav-links { display: none; } .hero { grid-template-columns: 1fr; gap: 35px; padding-top: 58px; } .preview { max-width: 600px; width: 100%; margin: auto; } .metrics, .feature-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .container { width: min(100% - 28px, 1120px); } .nav-actions .btn { padding: 9px 11px; font-size: 12px; } .brand span:last-child { display: none; } h1 { font-size: 43px; } .hero-copy > p { font-size: 16px; } .metrics, .feature-grid, .workflow { grid-template-columns: 1fr; } .section { padding: 52px 0; } .footer-row { align-items: flex-start; flex-direction: column; } }
+  </style>
 </head>
 <body>
-  <div class="auth-wrap">
-    <h1>Login to Smart Campus Complaints</h1>
-    <p class="sub">Access your campus dashboard.</p>
-
-    <div class="card">
-      <div class="tabs">
-        <button type="button" class="role-toggle active" data-role="student"><span>🎓</span> Student</button>
-        <button type="button" class="role-toggle" data-role="admin"><span>⚙</span> Admin</button>
-      </div>
-
-      <form id="loginForm">
-        <label for="loginIdentifier" id="loginIdentifierLabel">Student ID or Institutional Email</label>
-        <input type="text" id="loginIdentifier" placeholder="e.g. student ID or username@univ.edu" required />
-        <label for="loginPassword" id="loginPasswordLabel">Password</label>
-        <div class="password-field">
-          <input type="password" id="loginPassword" required />
-          <button type="button" id="togglePassword" class="password-toggle" aria-label="Show password">◉</button>
-        </div>
-        <div class="login-options">
-          <label class="checkbox-label"><input type="checkbox" id="rememberMe" checked /> Remember Me</label>
-          <a href="#" id="forgotPassword">Forgot Password?</a>
-        </div>
-        <button type="submit">Sign In</button>
-      </form>
-
-      <form id="registerForm" style="display: none">
-        <div id="regNameField">
-          <label for="regName">Full name</label>
-          <input type="text" id="regName" required />
-        </div>
-        <div id="regIdentifierField">
-          <label for="regIdentifier" id="regIdentifierLabel">Student Roll No / ID</label>
-          <input type="text" id="regIdentifier" required />
-        </div>
-        <div id="regEmailField">
-          <label for="regEmail" id="regEmailLabel">Institutional Email</label>
-          <input type="email" id="regEmail" required />
-        </div>
-        <div id="regDepartmentField">
-          <label for="regDepartment">Department / Branch</label>
-          <input type="text" id="regDepartment" required />
-        </div>
-        <div id="regPasswordField">
-          <label for="regPassword">Password (min 6 characters)</label>
-          <input type="password" id="regPassword" minlength="6" required />
-        </div>
-        <div id="signupCodeField" style="display: none">
-          <label for="signupCode" id="signupCodeLabel">Admin Passcode / Security Token</label>
-          <input type="password" id="signupCode" autocomplete="off" />
-          <small class="form-hint">A valid invite code is required for privileged accounts.</small>
-          <div id="adminPasscodeAlert" class="field-alert" role="alert"></div>
-        </div>
-        <button type="submit">Create account</button>
-      </form>
-
-      <div id="alert" class="alert"></div>
-      <p class="signup-prompt">New to the portal? <button type="button" id="tabRegister" class="text-button">Sign up for a new account</button></p>
-      <p class="signin-prompt" style="display: none">Already registered? <button type="button" id="tabLogin" class="text-button">Sign in</button></p>
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="#top" aria-label="Smart Campus Portal home"><span class="brand-badge"><span>◆</span></span><span>Smart Campus Portal</span></a>
+      <nav class="nav-links" aria-label="Main navigation"><a href="#features">Features</a><a href="#workflow">How It Works</a><a href="#metrics">Metrics</a><a href="#portal">Portal</a></nav>
+      <div class="nav-actions"><button class="btn btn-ghost portal-trigger" data-role="student">Student Login</button><button class="btn btn-primary portal-trigger" data-role="admin">Admin Portal</button></div>
     </div>
-  </div>
+  </header>
 
-  <script src="js/api.js"></script>
-  <script src="js/login.js?v=20261022-1935"></script>
+  <main id="top">
+    <section class="container hero">
+      <div class="hero-copy"><span class="eyebrow"><i></i> One campus. Every resolution.</span><h1>Effortless Campus <span class="gradient">Infrastructure</span> &amp; Grievance Resolution</h1><p>Report issues with photo evidence, monitor real-time ticket progression, and receive instant status updates from administrative teams.</p><div class="hero-actions"><button class="btn btn-primary portal-trigger" data-role="student">File a Complaint <span aria-hidden="true">→</span></button><a class="btn btn-ghost" href="#metrics">Track Status <span aria-hidden="true">↗</span></a></div></div>
+      <div class="preview glass" aria-label="Live complaint status preview"><div class="preview-top"><strong>Complaint activity</strong><span class="live">● Live updates</span></div><div class="preview-list"><div class="preview-row"><div class="ticket"><span class="ticket-icon">⌁</span><div><strong>Wi-Fi connectivity</strong><small>Library · 8 min ago</small></div></div><span class="status pending">Pending</span></div><div class="preview-row"><div class="ticket"><span class="ticket-icon">◈</span><div><strong>Projector issue</strong><small>Block B · 32 min ago</small></div></div><span class="status progress">In Progress</span></div><div class="preview-row"><div class="ticket"><span class="ticket-icon">✓</span><div><strong>Water dispenser</strong><small>Hostel 2 · Today</small></div></div><span class="status resolved">Resolved</span></div></div></div>
+    </section>
+
+    <section class="container section" id="metrics"><div class="section-heading"><span class="eyebrow"><i></i> Campus pulse</span><h2>Visibility at every step.</h2><p>A clear snapshot of campus issues keeps students informed and teams accountable.</p></div><div class="metrics"><div class="metric glass" style="--metric:#60a5fa"><span class="label">Total Filed</span><strong>1,240+</strong></div><div class="metric glass" style="--metric:#fbbf24"><span class="label">Pending Review</span><strong>12</strong></div><div class="metric glass" style="--metric:#22d3ee"><span class="label">In Progress</span><strong>28</strong></div><div class="metric glass" style="--metric:#4ade80"><span class="label">Resolved Issues</span><strong>1,200+</strong></div></div></section>
+
+    <section class="container section" id="features"><div class="section-heading"><span class="eyebrow"><i></i> Built for campus teams</span><h2>Everything needed to close the loop.</h2><p>Simple for students to report. Powerful for administrators to resolve.</p></div><div class="feature-grid"><article class="feature glass"><div class="feature-icon">⌑</div><h3>Photo Attachment</h3><p>Upload clear JPEG or PNG evidence up to 5MB so teams can act faster.</p></article><article class="feature glass"><div class="feature-icon">♙</div><h3>Role Separation</h3><p>Dedicated Student and Admin portals with secure passcode elevation.</p></article><article class="feature glass"><div class="feature-icon">⌁</div><h3>Real-Time Alert Engine</h3><p>Automatic notifications arrive as soon as your complaint status changes.</p></article><article class="feature glass"><div class="feature-icon">◉</div><h3>JWT Security</h3><p>Secure, stateless authentication keeps every campus account protected.</p></article></div></section>
+
+    <section class="container section" id="workflow"><div class="section-heading"><span class="eyebrow"><i></i> The lifecycle</span><h2>From report to resolution in 3 steps.</h2><p>No lost emails. No uncertain handoffs. Just a shared path forward.</p></div><div class="workflow"><article class="step glass"><h3>Log Grievance</h3><p>Select a category and location, describe the issue, and attach a photo in seconds.</p></article><article class="step glass"><h3>Admin Review</h3><p>Admins inspect the request, assign technicians, and update progress from one portal.</p></article><article class="step glass"><h3>Real-Time Resolution</h3><p>Instant notification badges keep students informed until the issue is fully resolved.</p></article></div></section>
+  </main>
+
+  <footer><div class="container footer-row"><div><div class="brand"><span class="brand-badge"><span>◆</span></span><span>Smart Campus Portal</span></div><div style="margin-top:10px">© 2026 Smart Campus Complaint Management System</div></div></div></footer>
+
+  <div class="modal" id="portal" role="dialog" aria-modal="true" aria-labelledby="portalTitle"><div class="auth-card glass"><button class="close" id="closeModal" aria-label="Close portal">×</button><h2 id="portalTitle">Welcome to the portal</h2><p>Sign in to manage campus complaints and updates.</p><div class="tabs"><button class="tab active" data-role="student">🎓 Student</button><button class="tab" data-role="admin">⚙ Admin</button></div><form id="loginForm"><label for="loginIdentifier" id="loginIdentifierLabel">Student ID or Institutional Email</label><input id="loginIdentifier" required placeholder="student ID or email"><label for="loginPassword" id="loginPasswordLabel">Password</label><div class="password-field"><input id="loginPassword" type="password" required><button type="button" class="password-toggle" id="togglePassword">◉</button></div><div class="login-options"><label class="checkbox-label"><input type="checkbox" id="rememberMe" checked> Remember Me</label><a href="#" id="forgotPassword">Forgot Password?</a></div><button class="btn btn-primary" type="submit">Sign In</button></form><form id="registerForm" style="display:none"><label>Full name</label><input id="regName"><label id="regIdentifierLabel">Student Roll No / ID</label><input id="regIdentifier"><label>Email</label><input id="regEmail" type="email" required><label>Department / Branch</label><input id="regDepartment"><label>Password (min 6 characters)</label><input id="regPassword" type="password" minlength="6"><div id="signupCodeField" style="display:none"><label>Admin Passcode / Security Token</label><input id="signupCode" type="password"></div><button class="btn btn-primary" type="submit">Create account</button></form><div class="alert" id="alert"></div><div class="auth-switch"><span id="signupPrompt">New to the portal? <button class="text-button" id="tabRegister" type="button">Sign up</button></span><span id="signinPrompt" style="display:none">Already registered? <button class="text-button" id="tabLogin" type="button">Sign in</button></span></div></div></div>
+  <script>
+    const API='/api'; const modal=document.getElementById('portal'); let selectedRole='student';
+    const token=()=>localStorage.getItem('token')||sessionStorage.getItem('token');
+    const saveAuth=(data)=>{localStorage.setItem('token',data.token);localStorage.setItem('user',JSON.stringify(data.user));window.location.href=data.user.role==='admin'?'/admin.html':'/student.html';};
+    async function request(path, options){const res=await fetch(API+path,{...options,headers:{'Content-Type':'application/json'}});const data=await res.json().catch(()=>({}));if(!res.ok)throw Error(data.message||'Request failed');return data;}
+    function openPortal(role='student'){modal.classList.add('open');setRole(role);document.body.style.overflow='hidden';}
+    function closePortal(){modal.classList.remove('open');document.body.style.overflow='';}
+    function setRole(role){selectedRole=role;document.querySelectorAll('[data-role]').forEach((el)=>el.classList.toggle('active',el.dataset.role===role));document.getElementById('loginIdentifierLabel').textContent=role==='admin'?'Admin Username / Email':'Student ID or Institutional Email';document.getElementById('loginIdentifier').placeholder=role==='admin'?'admin@univ.edu':'student ID or email';document.getElementById('loginPasswordLabel').textContent=role==='admin'?'Admin Passcode / Security Token':'Password';document.getElementById('signupCodeField').style.display=role==='admin'?'grid':'none';document.getElementById('regIdentifier').style.display=role==='admin'?'none':'block';document.getElementById('regIdentifierLabel').style.display=role==='admin'?'none':'block';document.getElementById('regDepartment').style.display=role==='admin'?'none':'block';}
+    document.querySelectorAll('.portal-trigger').forEach((el)=>el.addEventListener('click',()=>openPortal(el.dataset.role)));document.querySelectorAll('.tab').forEach((el)=>el.addEventListener('click',()=>setRole(el.dataset.role)));document.getElementById('closeModal').addEventListener('click',closePortal);modal.addEventListener('click',(e)=>{if(e.target===modal)closePortal();});document.addEventListener('keydown',(e)=>{if(e.key==='Escape')closePortal();});
+    document.getElementById('togglePassword').addEventListener('click',()=>{const p=document.getElementById('loginPassword');p.type=p.type==='password'?'text':'password';});
+    document.getElementById('forgotPassword').addEventListener('click',(e)=>{e.preventDefault();const a=document.getElementById('alert');a.textContent='Please contact campus IT support to reset your password.';a.className='alert show';});
+    document.getElementById('tabRegister').addEventListener('click',()=>{document.getElementById('loginForm').style.display='none';document.getElementById('registerForm').style.display='grid';document.getElementById('signupPrompt').style.display='none';document.getElementById('signinPrompt').style.display='inline';});
+    document.getElementById('tabLogin').addEventListener('click',()=>{document.getElementById('loginForm').style.display='grid';document.getElementById('registerForm').style.display='none';document.getElementById('signupPrompt').style.display='inline';document.getElementById('signinPrompt').style.display='none';});
+    document.getElementById('loginForm').addEventListener('submit',async(e)=>{e.preventDefault();try{const password=document.getElementById('loginPassword').value;const data=await request('/auth/login',{method:'POST',body:JSON.stringify({identifier:document.getElementById('loginIdentifier').value,password:selectedRole==='student'?password:undefined,adminPasscode:selectedRole==='admin'?password:undefined,role:selectedRole})});saveAuth(data);}catch(err){const a=document.getElementById('alert');a.textContent=err.message;a.className='alert show';}});
+    document.getElementById('registerForm').addEventListener('submit',async(e)=>{e.preventDefault();try{const data=await request('/auth/register',{method:'POST',body:JSON.stringify({name:document.getElementById('regName').value,studentId:selectedRole==='student'?document.getElementById('regIdentifier').value:undefined,department:document.getElementById('regDepartment').value,email:document.getElementById('regEmail').value,password:document.getElementById('regPassword').value,role:selectedRole,adminPasscode:selectedRole==='admin'?document.getElementById('signupCode').value:undefined})});saveAuth(data);}catch(err){const a=document.getElementById('alert');a.textContent=err.message;a.className='alert show';}});
+    if(token()){try{const user=JSON.parse(localStorage.getItem('user')||sessionStorage.getItem('user'));if(user?.role)window.location.href=user.role==='admin'?'/admin.html':'/student.html';}catch{}}
+  </script>
 </body>
 </html>

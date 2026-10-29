@@ -2,7 +2,35 @@
 
 Students report campus problems (classrooms, Wi-Fi, facilities...) and track their resolution. Admins review complaints and update their status.
 
-**Stack:** HTML, CSS, JavaScript (frontend) · Node.js + Express.js (backend) · MongoDB + Mongoose (database) · JWT authentication
+**Stack:** HTML, CSS, JavaScript (frontend) · Java 17 + Spring Boot 3 (backend) · JPA + MySQL (H2 is used by default for development) · JWT authentication
+
+## Spring Boot backend
+
+The migrated REST service is in `backend/` and is independent of the legacy Node.js files. Its package layout is:
+
+```
+backend/
+├── pom.xml
+├── src/main/resources/application.properties
+└── src/main/java/com/campus/complaints/
+    ├── CampusComplaintsApplication.java
+    ├── config/                 # static upload resources and API errors
+    ├── controller/             # auth, complaints, admin, notifications
+    ├── model/                  # User, Complaint, Notification and enums
+    ├── repository/             # Spring Data JPA repositories
+    ├── security/               # stateless JWT filter and Spring Security
+    └── service/                # complaint and NIO file storage services
+```
+
+Run it from `backend/` with Java 17 and Maven:
+
+```powershell
+mvn spring-boot:run
+```
+
+It listens on `http://localhost:8080`. H2 file storage is the default development database. For MySQL, set `DATABASE_URL` to a JDBC URL, `DATABASE_USERNAME`, `DATABASE_PASSWORD`, and `DATABASE_DRIVER=com.mysql.cj.jdbc.Driver`. Set `JWT_SECRET` to a random value of at least 32 characters and `ADMIN_PASSCODE` before deployment. Uploaded JPEG/PNG evidence is stored in `uploads/` and served at `/uploads/<filename>`.
+
+The Spring service preserves the frontend API routes, including `/api/auth`, `/api/complaints`, `/api/admin/complaints/{id}/status`, and `/api/notifications`. Complaint uploads accept both the current frontend field `evidence` and the specified `file` field.
 
 ## Features
 

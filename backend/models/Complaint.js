@@ -2,7 +2,14 @@ const mongoose = require('mongoose');
 
 const STATUSES = ['Pending', 'In Progress', 'Resolved', 'Rejected'];
 const CATEGORIES = ['Classroom', 'Wi-Fi', 'Facilities', 'Library', 'Hostel', 'Other'];
-const DEPARTMENTS = ['Classroom', 'IT Support', 'Facilities', 'Library', 'Hostel', 'General'];
+const DEPARTMENTS = ['Classroom', 'IT Support', 'Facilities', 'Library', 'Hostel', 'CSE', 'General'];
+const DISPLAY_STAFF = [
+  { id: 'display-ravi-kumar', name: 'Ravi Kumar', department: 'IT Support' },
+  { id: 'display-priya-singh', name: 'Priya Singh', department: 'Library' },
+  { id: 'display-anil-das', name: 'Anil Das', department: 'Facilities' },
+  { id: 'display-meena-roy', name: 'Meena Roy', department: 'Hostel' },
+  { id: 'display-karan-shah', name: 'Karan Shah', department: 'Classroom' }
+];
 
 const historySchema = new mongoose.Schema(
   {
@@ -49,6 +56,7 @@ const complaintSchema = new mongoose.Schema(
     assignment: {
       department: { type: String, enum: DEPARTMENTS, default: 'General' },
       assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+      assignedName: { type: String, default: '' },
       assignedAt: { type: Date, default: null },
       assignedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null }
     },
@@ -61,3 +69,4 @@ module.exports = mongoose.model('Complaint', complaintSchema);
 module.exports.STATUSES = STATUSES;
 module.exports.CATEGORIES = CATEGORIES;
 module.exports.DEPARTMENTS = DEPARTMENTS;
+module.exports.DISPLAY_STAFF = DISPLAY_STAFF;

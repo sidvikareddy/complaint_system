@@ -27,6 +27,16 @@ let complaints = [];
 let currentId = null;
 let staff = [];
 
+function renderAssignees(selectedId = '') {
+  const department = mDepartment.value;
+  const matchingStaff = staff.filter((person) => person.department === department);
+  mAssignee.innerHTML = '<option value="">Unassigned</option>' +
+    matchingStaff
+      .map((person) => `<option value="${person._id}">${esc(person.name)} · ${esc(person.department)}</option>`)
+      .join('');
+  if (matchingStaff.some((person) => person._id === selectedId)) mAssignee.value = selectedId;
+}
+
 function statClass(s) {
   return { Pending: 'pending', 'In Progress': 'progress', Resolved: 'resolved', Rejected: 'rejected' }[s] || '';
 }
@@ -101,7 +111,15 @@ async function openModal(id) {
   mStatus.value = c.status;
   mRemarks.value = c.adminRemarks || '';
   mDepartment.value = c.assignment && c.assignment.department ? c.assignment.department : 'General';
-  mAssignee.value = c.assignment && c.assignment.assignedTo ? c.assignment.assignedTo._id : '';
+  const assignedName = c.assignment && c.assignment.assignedName;
+  const displayAssignee = assignedName ? staff.find((person) => person.name === assignedName) : null;
+  renderAssignees(
+    c.assignment && c.assignment.assignedTo
+      ? c.assignment.assignedTo._id
+      : displayAssignee
+        ? displayAssignee._id
+        : ''
+  );
   hideAlert(mAlert);
   mHistory.innerHTML = c.history
     .map((h) => `<li>${badge(h.status)} ${h.remarks ? esc(h.remarks) : ''}<div class="when">${fmtDate(h.changedAt)}${h.changedBy ? ` · ${esc(h.changedBy.name)} (${esc(h.changedBy.role)})` : ''}</div></li>`)
@@ -150,6 +168,7 @@ mAddNote.addEventListener('click', async () => {
   }
 });
 
+mDepartment.addEventListener('change', () => renderAssignees());
 document.getElementById('applyBtn').addEventListener('click', loadComplaints);
 document.getElementById('resetBtn').addEventListener('click', () => {
   searchEl.value = '';
@@ -163,14 +182,22 @@ filterPriority.addEventListener('change', loadComplaints);
 
 (async function init() {
   const [meta, staffList] = await Promise.all([api('/complaints/meta'), api('/auth/staff')]);
-  staff = staffList;
+  staff = [...staffList, ...(meta.displayStaff || []).map((person) => ({
+    _id: person.id,
+    name: person.name,
+    department: person.department
+  }))];
   meta.statuses.forEach((s) => {
     filterStatus.insertAdjacentHTML('beforeend', `<option>${esc(s)}</option>`);
     mStatus.insertAdjacentHTML('beforeend', `<option>${esc(s)}</option>`);
   });
   meta.categories.forEach((c) => filterCategory.insertAdjacentHTML('beforeend', `<option>${esc(c)}</option>`));
-  meta.departments.forEach((d) => mDepartment.insertAdjacentHTML('beforeend', `<option value="${esc(d)}">${esc(d)}</option>`));
-  staff.forEach((person) => mAssignee.insertAdjacentHTML('beforeend', `<option value="${person._id}">${esc(person.name)} · ${esc(person.department || person.role)}</option>`));
+  const departments = [...new Set([
+    ...meta.departments,
+    ...staff.filter((person) => person.department).map((person) => person.department)
+  ])];
+  departments.forEach((d) => mDepartment.insertAdjacentHTML('beforeend', `<option value="${esc(d)}">${esc(d)}</option>`));
+  renderAssignees();
   await Promise.all([loadStats(), loadComplaints()]);
 })();
 

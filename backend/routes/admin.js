@@ -1,6 +1,7 @@
 const express = require('express');
 const PDFDocument = require('pdfkit');
 const Complaint = require('../models/Complaint');
+const { DISPLAY_STAFF } = require('../models/Complaint');
 const User = require('../models/User');
 const Notification = require('../models/Notification');
 const { STATUSES, CATEGORIES } = require('../models/Complaint');
@@ -113,13 +114,20 @@ router.put('/complaints/:id', async (req, res, next) => {
     }
     if (req.body.department !== undefined || req.body.assignedTo !== undefined) {
       const assignedTo = req.body.assignedTo || null;
+      const department = req.body.department || complaint.assignment.department || 'General';
+      const displayStaff = DISPLAY_STAFF.find((person) => person.id === assignedTo && person.department === department);
       if (assignedTo) {
-        const staff = await User.findOne({ _id: assignedTo, role: { $in: ['staff', 'admin'] } }).select('_id');
-        if (!staff) return res.status(400).json({ message: 'Assigned user is not staff or admin' });
+        const staff = displayStaff || await User.findOne({
+          _id: assignedTo,
+          role: { $in: ['staff', 'admin'] },
+          department
+        }).select('_id');
+        if (!staff) return res.status(400).json({ message: 'Assigned user must belong to the selected department' });
       }
       complaint.assignment = {
-        department: req.body.department || complaint.assignment.department || 'General',
-        assignedTo,
+        department,
+        assignedTo: displayStaff ? null : assignedTo,
+        assignedName: displayStaff ? displayStaff.name : '',
         assignedAt: new Date(),
         assignedBy: req.user._id
       };
